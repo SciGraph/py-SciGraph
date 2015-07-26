@@ -24,6 +24,14 @@ class SciGraph:
         response = self.get_response("graph/neighbors", id, "json", params)
         return BBOPGraph(response.json())
 
+    def graph(self, id=None, params={}):
+        g1 = self.neighbors(id, {'relationshipType':'subClassOf', 'blankNodes':'false', 'direction':'OUTGOING','depth':5})
+        g2 = self.neighbors(id, {'relationshipType':'subClassOf', 'direction':'INCOMING','depth':1})
+        g3 = self.neighbors(id, {'relationshipType':'equivalentClass', 'depth':1})
+        g1.merge(g2)
+        g1.merge(g3)
+        return g1
+
     def autocomplete(self, term=None):
         response = self.get_response("vocabulary/autocomplete", term)
         return response.json()['list']

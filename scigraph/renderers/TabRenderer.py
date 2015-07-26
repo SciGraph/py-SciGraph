@@ -18,7 +18,10 @@ class TabRenderer(Renderer):
 
     def render(self, obj):
         ## ASSUME BBOP GRAPH
+        nodes = obj.nodes
         edges = obj.edges
+        for node in nodes:
+            print(str(node) +" C:"+str(node.meta.category_list))
         for edge in edges:
-            print(edge)
+            print(str(edge))
 

@@ -8,6 +8,9 @@ import unittest
 
 from scigraph.SciGraph import SciGraph
 from scigraph.renderers.RawRenderer import RawRenderer
+from scigraph.renderers.TabRenderer import *
+from scigraph.renderers.GraphVizRenderer import *
+from scigraph.renderers.AutoCompleteRenderer import *
 
 renderer = None
 
@@ -19,7 +22,7 @@ def main():
 
     parser.add_argument('-u', '--url', type=str, required=False,
                         help='A base URL for SciGraph')
-    parser.add_argument('-t', '--to', type=str, default='raw', required=False,
+    parser.add_argument('-t', '--to', type=str, required=False,
                         help='Renderer')
 
 
@@ -29,6 +32,11 @@ def main():
     parser_n = subparsers.add_parser('n', help='neighbors')
     parser_n.add_argument('-d', '--depth', type=int, help='number of hops')
     parser_n.set_defaults(function=neighbors)
+    parser_n.add_argument('ids',nargs='*')
+
+    # SUBCOMMAND
+    parser_n = subparsers.add_parser('g', help='graph')
+    parser_n.set_defaults(function=graph)
     parser_n.add_argument('ids',nargs='*')
 
     # SUBCOMMAND
@@ -43,10 +51,19 @@ def main():
 
     args = parser.parse_args()
 
+    renderer_class = RawRenderer
+    if (args.subcommand == 'a'):
+        renderer_class = AutoCompleteRenderer
     rmap = {
-        'raw' : RawRenderer
+        'raw' : RawRenderer,
+        'png' : GraphVizRenderer,
+        'tsv' : TabRenderer
     }
-    renderer_class = rmap[args.to]
+    if args.to is not None:
+        renderer_class = rmap[args.to]
+    print("SC="+str(args.subcommand))
+    print("AT="+str(args.to))
+    print("RC="+str(renderer_class))
     global renderer
     renderer = renderer_class()
     print("R="+str(renderer))
@@ -67,7 +84,12 @@ def main():
 def neighbors(sg, args):
     for id in args.ids:
         g = sg.neighbors(id, {'depth': args.depth})
-        renderer.render(g.nodes)
+        renderer.render(g)
+
+def graph(sg, args):
+    for id in args.ids:
+        g = sg.graph(id, {})
+        renderer.render(g)
 
 def autocomplete(sg, args):
     t = " ".join(args.terms)
