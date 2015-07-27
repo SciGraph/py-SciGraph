@@ -2,6 +2,10 @@ Python API and Command Line Client for [SciGraph](https://github.com/SciGraph/Sc
 
 This API works off of a SciGraph REST service. Consult SciGraph docs for details.
 
+This API is generic and will work off of any SciGraph instance,
+regardless of whether it is used to store genotype-phenotype data,
+neuroanatomy or pizzas.
+
 Alpha software: API may change
 
 ## Python Examples
@@ -10,6 +14,8 @@ Alpha software: API may change
 
 ```
 from scigraph.api.SciGraph import SciGraph
+
+sg = SciGraph("http://datagraph.monarchitiative.org/")
 g = sg.neighbors('OMIM:118300',{'depth':1})
 for n in g.nodes:
   print(n.id +" " + n.label)
