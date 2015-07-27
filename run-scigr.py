@@ -6,7 +6,7 @@ import argparse
 import logging
 import unittest
 
-from scigraph.SciGraph import SciGraph
+from scigraph.api.SciGraph import SciGraph
 from scigraph.renderers.RawRenderer import RawRenderer
 from scigraph.renderers.TabRenderer import *
 from scigraph.renderers.GraphVizRenderer import *

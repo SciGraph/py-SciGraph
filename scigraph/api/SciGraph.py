@@ -24,6 +24,8 @@ class SciGraph:
 
     def neighbors(self, id=None, params={}):
         response = self.get_response("graph/neighbors", id, "json", params)
+        if (response.status_code != 200):
+            print("UH-OH:"+str(response))
         return BBOPGraph(response.json())
 
     def graph(self, id=None, params={}):
