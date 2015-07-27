@@ -39,7 +39,42 @@ class BBOPGraph:
             self.add_node(n)
         for e in g.edges:
             self.add_edge(e)
-        
+
+    def get_node(self, id) :
+        return self.nodemap[id]
+
+    def get_label(self, id) :
+        return self.nodemap[id].label
+
+    def get_root_nodes(self, relations=[]):
+        roots = []
+        for n in self.nodes:
+            if (len(self.get_outgoing_edges(n.id, relations)) == 0):
+                roots.append(n)
+        return roots
+
+    def get_leaf_nodes(self, relations=[]):
+        roots = []
+        for n in self.nodes:
+            if (len(self.get_incoming_edges(n.id, relations)) == 0):
+                roots.append(n)
+        return roots
+
+    def get_outgoing_edges(self, nid, relations=[]):
+        el = []
+        for e in self.edges:
+            if (e.subject == nid):
+                if (len(relations) == 0 or e.predicate in relations):
+                    el.append(e)
+        return el
+
+    def get_incoming_edges(self, nid, relations=[]):
+        el = []
+        for e in self.edges:
+            if (e.target == nid):
+                if (len(relations) == 0 or e.predicate in relations):
+                    el.append(e)
+        return el
 
 class Node:
     def __init__(self, obj={}):    

@@ -16,12 +16,13 @@ class TabRenderer(Renderer):
     def __init__(self):
         Renderer.__init__(self)
 
-    def render(self, obj):
+    def render(self, g):
         ## ASSUME BBOP GRAPH
-        nodes = obj.nodes
-        edges = obj.edges
-        for node in nodes:
-            print(str(node) +" C:"+str(node.meta.category_list))
-        for edge in edges:
-            print(str(edge))
+        nodes = g.nodes
+        edges = g.edges
+        #for node in nodes:
+        #    print(str(node) +" C:"+str(node.meta.category_list))
+        for e in edges:
+            print('{0: <14} {1: <24} -[{2: <12}]-> {3: <14} {4: <24}'.format(e.subject, str(g.get_label(e.subject)), e.predicate, e.target, str(g.get_label(e.target))))
+            #print(str(edge))
 

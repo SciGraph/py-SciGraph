@@ -11,6 +11,9 @@ from scigraph.renderers.RawRenderer import RawRenderer
 from scigraph.renderers.TabRenderer import *
 from scigraph.renderers.GraphVizRenderer import *
 from scigraph.renderers.AutoCompleteRenderer import *
+from scigraph.renderers.SearchResultsRenderer import *
+from scigraph.renderers.EntityAnnotationRenderer import *
+from scigraph.renderers.GraphTreeRenderer import *
 
 renderer = None
 
@@ -45,6 +48,11 @@ def main():
     parser_a.add_argument('terms',nargs='*')
 
     # SUBCOMMAND
+    parser_s = subparsers.add_parser('s', help='search')
+    parser_s.set_defaults(function=search)
+    parser_s.add_argument('terms',nargs='*')
+
+    # SUBCOMMAND
     parser_ann = subparsers.add_parser('ann', help='annotate')
     parser_ann.set_defaults(function=annotate)
     parser_ann.add_argument('content',nargs='*')
@@ -54,24 +62,24 @@ def main():
     renderer_class = RawRenderer
     if (args.subcommand == 'a'):
         renderer_class = AutoCompleteRenderer
+    if (args.subcommand == 'ann'):
+        renderer_class = EntityAnnotationRenderer
+    if (args.subcommand == 's'):
+        renderer_class = SearchResultsRenderer
     rmap = {
         'raw' : RawRenderer,
         'png' : GraphVizRenderer,
+        'tree' : GraphTreeRenderer,
         'tsv' : TabRenderer
     }
     if args.to is not None:
         renderer_class = rmap[args.to]
-    print("SC="+str(args.subcommand))
-    print("AT="+str(args.to))
-    print("RC="+str(renderer_class))
     global renderer
     renderer = renderer_class()
-    print("R="+str(renderer))
 
 
     ## PROCESS GLOBALS
 
-    print(args.url)
     sg = SciGraph(args.url)
 
     ## PROCESS SUBCOMMAND
@@ -79,7 +87,6 @@ def main():
     func = args.function
     func(sg, args)
 
-    print("--DONE--")
 
 def neighbors(sg, args):
     for id in args.ids:
@@ -93,19 +100,19 @@ def graph(sg, args):
 
 def autocomplete(sg, args):
     t = " ".join(args.terms)
-    print("t="+t)
     nodes = sg.autocomplete(t)
-    #print(nodes)
     renderer.render(nodes)
+
+def search(sg, args):
+    t = " ".join(args.terms)
+    concepts = sg.search(t)
+    renderer.render(concepts)
 
 def annotate(sg, args):
     t = " ".join(args.content)
-    print("t="+t)
     spans = sg.annotate(t)
-    print(spans)
+    renderer.render(spans)
 
-def render(obj, args):
-    print("R")
 
 if __name__ == "__main__":
     main()
