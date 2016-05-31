@@ -49,7 +49,7 @@ class SciGraph:
 
     def annotate(self, content=None):
         ## TODO: post not get
-        response = self.get_response("annotations/entities", None, "json", {'content':content})
+        response = self.get_response("annotations/entities", None, "json", {'content':content, 'longestOnly':True})
         return EntityAnnotationResults(response.json(), content)
 
     def get_response(self, path="", q=None, format=None, payload={}):
@@ -58,6 +58,5 @@ class SciGraph:
             url += "/" +q;
         if format is not None:
             url = url  + "." + format;
-        print(url)
         r = requests.get(url, params=payload)
         return r
